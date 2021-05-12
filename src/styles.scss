@@ -1,0 +1,9 @@
+$primary: #008A5E;
+$headings-color: #232F84;
+$navbar-light-brand-color: #D7D8DD;
+$danger: #B30000;
+
+@import '~bootstrap/scss/bootstrap';
+@import '~font-awesome/scss/font-awesome';
+@import 'app/shared/styles/file-input.scss';
+@import 'app/shared/styles/table.scss';

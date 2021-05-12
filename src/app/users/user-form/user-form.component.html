@@ -1,0 +1,246 @@
+<h1>Cadastrar Usuário</h1>
+
+<app-card>
+  <form [formGroup]="userForm" (ngSubmit)="onSubmit()" class="needs-validation">
+    <div class="form-row">
+      <div class="form-group col-md-4">
+        <label for="name">Nome</label>
+        <input
+          type="text"
+          class="form-control"
+          id="name"
+          placeholder="Nome"
+          formControlName="name"
+          maxlength="100"
+          [ngClass]="{
+            'is-invalid': hasError('name'),
+            'is-valid': hasBeenTouched('name') && !hasError('name')
+          }"
+        />
+        <div *ngIf="hasError('name')" class="invalid-feedback">
+          Campo obrigatório
+        </div>
+      </div>
+      <div class="form-group col-md-4">
+        <label for="username">Usuário</label>
+        <input
+          type="text"
+          class="form-control"
+          id="username"
+          placeholder="Usuário"
+          formControlName="username"
+          maxlength="50"
+          [ngClass]="{
+            'is-invalid':
+              hasError('username') || hasError('username', 'alreadyInUse'),
+            'is-valid': hasBeenTouched('username') && !hasError('username')
+          }"
+        />
+        <div *ngIf="hasError('username')" class="invalid-feedback">
+          Campo obrigatório
+        </div>
+        <div
+          *ngIf="hasError('username', 'alreadyInUse')"
+          class="invalid-feedback"
+        >
+          Usuário já cadastrado
+        </div>
+      </div>
+      <div class="form-group col-md-4">
+        <label for="password">Senha</label>
+        <input
+          type="password"
+          class="form-control"
+          id="password"
+          placeholder="Senha"
+          formControlName="password"
+          maxlength="32"
+          [ngClass]="{
+            'is-invalid': hasError('password'),
+            'is-valid': hasBeenTouched('password') && !hasError('password')
+          }"
+        />
+        <div *ngIf="hasError('password')" class="invalid-feedback">
+          Campo obrigatório
+        </div>
+      </div>
+      <div class="form-group col-md-4">
+        <label for="profile">Perfil</label>
+        <select
+          id="profile"
+          class="form-control"
+          formControlName="profile"
+          [ngClass]="{
+            'is-invalid': hasError('profile'),
+            'is-valid': hasBeenTouched('profile') && !hasError('profile')
+          }"
+        >
+          <option></option>
+          <option value="ADMIN">Admin</option>
+          <option value="OPERATOR">Operador</option>
+          <option value="VIEWER">Visualizador</option>
+        </select>
+        <div *ngIf="hasError('profile')" class="invalid-feedback">
+          Campo obrigatório
+        </div>
+      </div>
+      <div class="form-group col-md-4">
+        <label for="company">Empresa</label>
+        <input
+          type="text"
+          class="form-control"
+          id="company"
+          placeholder="Empresa"
+          formControlName="company"
+          [ngClass]="{
+            'is-invalid':
+              hasError('company') || companyTypeaheadService.searchFailed,
+            'is-valid': hasBeenTouched('company') && !hasError('company')
+          }"
+          [class.is-invalid]="companyTypeaheadService.searchFailed"
+          [ngbTypeahead]="companyTypeaheadService.search"
+          [resultTemplate]="companyRt"
+          [inputFormatter]="companyTypeaheadService.formatter"
+          [editable]="false"
+        />
+        <ng-template #companyRt let-r="result" let-t="term">
+          <ngb-highlight [result]="r.name" [term]="t"></ngb-highlight>
+        </ng-template>
+        <small
+          *ngIf="companyTypeaheadService.searching"
+          class="form-text text-muted"
+          >Pesquisando...</small
+        >
+        <div
+          *ngIf="companyTypeaheadService.searchFailed"
+          class="invalid-feedback"
+        >
+          Desculpe, ocorreu um erro ao carregar a lista de empresas.
+        </div>
+        <div
+          *ngIf="!companyTypeaheadService.searchFailed && hasError('company')"
+          class="invalid-feedback"
+        >
+          Campo obrigatório
+        </div>
+      </div>
+      <div class="form-group col-md-4">
+        <label for="profilePicture">Foto</label>
+        <div class="custom-file">
+          <input
+            type="file"
+            class="custom-file-input"
+            id="profilePicture"
+            formControlName="profilePicture"
+            (change)="onProfilePictureChange($event)"
+            [ngClass]="{
+              'is-invalid':
+                hasError('profilePicture', 'invalidFileExtension') ||
+                hasError('profilePicture', 'invalidFileSize')
+            }"
+          />
+          <label class="custom-file-label" for="profilePicture">{{
+            selectedProfilePicture
+              ? selectedProfilePicture.name
+              : "Escolher arquivo..."
+          }}</label>
+          <div
+            class="invalid-feedback"
+            *ngIf="hasError('profilePicture', 'invalidFileExtension')"
+          >
+            Só é possível selecionar imagens ({{
+              enabledProfilePictureExtenstion.join(", ")
+            }})
+          </div>
+          <div
+            class="invalid-feedback"
+            *ngIf="hasError('profilePicture', 'invalidFileSize')"
+          >
+            Selecione uma imagem com menos de 0,5MB
+          </div>
+        </div>
+      </div>
+      <div class="form-group col-md-4">
+        <label for="gender">Gênero</label>
+        <br />
+        <div
+          class="form-check form-check-inline"
+          [ngClass]="{
+            'is-invalid': hasError('gender'),
+            'is-valid': hasBeenTouched('gender') && !hasError('gender')
+          }"
+        >
+          <input
+            class="form-check-input"
+            type="radio"
+            name="gender"
+            formControlName="gender"
+            id="radio-masculine"
+            value="MASCULINE"
+            [ngClass]="{
+              'is-invalid': hasError('gender'),
+              'is-valid': hasBeenTouched('gender') && !hasError('gender')
+            }"
+          />
+          <label class="form-check-label" for="radio-masculine"
+            >Masculino</label
+          >
+        </div>
+        <div class="form-check form-check-inline">
+          <input
+            class="form-check-input"
+            type="radio"
+            name="gender"
+            formControlName="gender"
+            id="radio-feminine"
+            value="FEMININE"
+            [ngClass]="{
+              'is-invalid': hasError('gender'),
+              'is-valid': hasBeenTouched('gender') && !hasError('gender')
+            }"
+          />
+          <label class="form-check-label" for="radio-feminine">Feminino</label>
+        </div>
+        <div class="form-check form-check-inline">
+          <input
+            class="form-check-input"
+            type="radio"
+            name="gender"
+            formControlName="gender"
+            id="radio-other"
+            value="OTHER"
+            [ngClass]="{
+              'is-invalid': hasError('gender'),
+              'is-valid': hasBeenTouched('gender') && !hasError('gender')
+            }"
+          />
+          <label class="form-check-label" for="radio-other">Outro</label>
+        </div>
+        <div *ngIf="hasError('gender')" class="invalid-feedback">
+          Campo obrigatório
+        </div>
+      </div>
+      <div class="form-group col-md-4 d-flex align-items-end">
+        <div class="form-check mb-1">
+          <input
+            class="form-check-input"
+            type="checkbox"
+            id="active"
+            formControlName="active"
+          />
+          <label class="form-check-label" for="active"> Ativo </label>
+        </div>
+      </div>
+    </div>
+
+    <button type="button" class="btn btn-secondary mr-2" [routerLink]="['..']" [disabled]="userForm.disabled">
+      Cancelar
+    </button>
+    <button type="submit" class="btn btn-primary" [disabled]="userForm.disabled" [ngClass]="{'pl-4 pr-4': userForm.disabled}">
+      <div class="spinner-border spinner-border-sm" role="status" *ngIf="userForm.disabled; else elseBlock">
+        <span class="sr-only">Loading...</span>
+      </div>
+      <ng-template #elseBlock>Salvar</ng-template>
+    </button>
+  </form>
+</app-card>
